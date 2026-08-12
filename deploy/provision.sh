@@ -162,6 +162,19 @@ git config --global --add safe.directory "$APP_DIR"
 chown -R "${APP_USER}:${APP_USER}" "$APP_DIR"
 find "$APP_DIR/storage" "$APP_DIR/bootstrap/cache" -type d -exec chmod 775 {} \; 2>/dev/null || true
 
+# www-data's home is /var/www and is not writable by it, so npm and composer
+# have nowhere to put their caches and the deploy fails on a permissions error
+# that reads like something else entirely.
+log "Giving ${APP_USER} writable cache directories"
+mkdir -p /var/www/.npm /var/www/.composer /var/www/.cache
+chown -R "${APP_USER}:${APP_USER}" /var/www/.npm /var/www/.composer /var/www/.cache
+
+# Both npm ci (puppeteer's postinstall) and Browsershot look here. Without it
+# every deploy re-downloads ~150MB of Chrome into a directory nothing can read.
+if ! grep -q PUPPETEER_CACHE_DIR /etc/environment; then
+    echo 'PUPPETEER_CACHE_DIR=/opt/puppeteer' >> /etc/environment
+fi
+
 # ---------------------------------------------------------------------------
 # nginx
 # ---------------------------------------------------------------------------

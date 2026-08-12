@@ -49,6 +49,11 @@ fi
 # unstyled HTML. See App\Support\InlineAssets.
 # ---------------------------------------------------------------------------
 log "Building assets"
+
+# Reuse the Chrome provision.sh installed rather than pulling another copy.
+export PUPPETEER_CACHE_DIR="${PUPPETEER_CACHE_DIR:-/opt/puppeteer}"
+export PUPPETEER_SKIP_DOWNLOAD=true
+
 npm ci --no-audit --no-fund
 npm run build
 
