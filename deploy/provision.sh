@@ -204,7 +204,10 @@ log "Creating the database and role"
 DB_PASS_FILE=/etc/dynamic-db-password
 
 if [[ ! -f "$DB_PASS_FILE" ]]; then
-    openssl rand -base64 32 | tr -d '/+=' | head -c 32 > "$DB_PASS_FILE"
+    # No `| head -c 32` — it would exit early, SIGPIPE the tr, and pipefail
+    # would abort provisioning right here. Trim with a substring instead.
+    DB_PASS_RAW="$(openssl rand -base64 48 | tr -d '/+=\n')"
+    printf '%s' "${DB_PASS_RAW:0:32}" > "$DB_PASS_FILE"
     chmod 600 "$DB_PASS_FILE"
 fi
 DB_PASS="$(cat "$DB_PASS_FILE")"
