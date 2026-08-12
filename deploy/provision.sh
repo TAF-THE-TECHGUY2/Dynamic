@@ -56,6 +56,8 @@ fi
 
 log "Updating apt"
 export DEBIAN_FRONTEND=noninteractive
+# Stops needrestart opening its service-restart dialog and stalling the run.
+export NEEDRESTART_MODE=a
 apt-get update -qq
 apt-get upgrade -y -qq
 
@@ -76,15 +78,62 @@ apt-get install -y -qq \
     php${PHP_VERSION}-gd php${PHP_VERSION}-intl \
     git unzip curl acl certbot python3-certbot-nginx
 
+# Debian's packaging installs the module but does not always enable it for every
+# SAPI, so enable each explicitly. phpenmod is a no-op when it is already on.
+log "Enabling PHP extensions"
+for mod in bcmath mbstring gd intl zip curl xml pgsql; do
+    phpenmod -v "${PHP_VERSION}" "$mod" 2>/dev/null || true
+done
+systemctl restart "php${PHP_VERSION}-fpm" 2>/dev/null || true
+
 log "Verifying the extensions the app actually needs"
+MISSING=()
 for ext in pdo_pgsql bcmath mbstring gd intl zip; do
     if php -m | grep -qi "^${ext}$"; then
         echo "  ok   ${ext}"
     else
-        echo "  MISSING ${ext}" >&2
-        exit 1
+        echo "  MISSING ${ext}"
+        MISSING+=("$ext")
     fi
 done
+
+if (( ${#MISSING[@]} > 0 )); then
+    # One retry with the packages named directly. bcmath in particular is not
+    # optional: App\Support\Dec does every cent of the money arithmetic with it,
+    # so a server without it would compute wrong totals rather than fail loudly.
+    log "Installing the missing extensions directly: ${MISSING[*]}"
+
+    for ext in "${MISSING[@]}"; do
+        pkg="php${PHP_VERSION}-${ext#pdo_}"
+        apt-get install -y "$pkg" || echo "  could not install ${pkg}" >&2
+        phpenmod -v "${PHP_VERSION}" "${ext#pdo_}" 2>/dev/null || true
+    done
+
+    systemctl restart "php${PHP_VERSION}-fpm" 2>/dev/null || true
+
+    STILL_MISSING=()
+    for ext in "${MISSING[@]}"; do
+        php -m | grep -qi "^${ext}$" || STILL_MISSING+=("$ext")
+    done
+
+    if (( ${#STILL_MISSING[@]} > 0 )); then
+        cat >&2 <<FAIL
+
+Cannot continue: PHP is missing ${STILL_MISSING[*]}.
+
+Diagnose with:
+    dpkg -l | grep -E 'php${PHP_VERSION}-(bcmath|mbstring|gd|intl|zip|pgsql)'
+    apt-cache policy php${PHP_VERSION}-bcmath
+    php -i | grep -i 'Loaded Configuration|Scan this dir'
+
+If the package is genuinely unavailable, the universe repository is probably
+not enabled:
+    sudo add-apt-repository -y universe && sudo apt-get update
+
+FAIL
+        exit 1
+    fi
+fi
 
 # ---------------------------------------------------------------------------
 # Node and Composer
