@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\Grade;
 use App\Models\PriceHistory;
 use App\Models\User;
+use App\Support\Dec;
 use App\Support\PageCache;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -140,7 +141,9 @@ final class PriceBook
             $rows = collect();
 
             foreach ($pricesByGrade as $gradeId => $price) {
-                $normalised = number_format((float) $price, 4, '.', '');
+                // Exact, not (float) — this is the price every future quote is
+                // multiplied by, and decimal(10,4) is wide enough to matter.
+                $normalised = Dec::fromScaledInt(Dec::scaleToInt($price, 4), 4);
                 $existing = $currentPrices->get($gradeId);
 
                 // Republishing an unchanged price would add noise to the history

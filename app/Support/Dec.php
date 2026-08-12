@@ -64,6 +64,28 @@ final class Dec
     }
 
     /**
+     * Render an integer scaled by 10^$scale back as a decimal string.
+     *
+     * fromScaledInt('237000', 4) === '23.7000' — the shape decimal(10,4) holds.
+     *
+     * @param  numeric-string  $scaled
+     */
+    public static function fromScaledInt(string $scaled, int $scale): string
+    {
+        if ($scale <= 0) {
+            return $scaled;
+        }
+
+        $negative = str_starts_with($scaled, '-');
+        $digits = str_pad(ltrim($scaled, '-'), $scale + 1, '0', STR_PAD_LEFT);
+
+        $whole = substr($digits, 0, -$scale);
+        $fraction = substr($digits, -$scale);
+
+        return ($negative ? '-' : '').$whole.'.'.$fraction;
+    }
+
+    /**
      * Divide $n by a positive $d, rounding halves up (towards +infinity).
      *
      * This is exactly what PHP's round() and JavaScript's Math.round() do for
