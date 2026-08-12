@@ -41,7 +41,7 @@ fi
 # the kernel kills the queue worker mid-render and the only symptom is invoices
 # that never arrive.
 # ---------------------------------------------------------------------------
-if ! swapon --show | grep -q '/swapfile'; then
+if ! grep -q '/swapfile' <<< "$(swapon --show)"; then
     log "Creating a 2GB swap file"
     fallocate -l 2G /swapfile
     chmod 600 /swapfile
@@ -87,9 +87,19 @@ done
 systemctl restart "php${PHP_VERSION}-fpm" 2>/dev/null || true
 
 log "Verifying the extensions the app actually needs"
+
+# Read the module list once into a variable and match with a here-string.
+#
+# `php -m | grep -q ...` looks harmless and is not: grep -q exits the instant
+# it matches, closing the pipe, and php dies of SIGPIPE. Under `set -o pipefail`
+# that non-zero status becomes the pipeline's, so a module that IS present gets
+# reported missing — and only sometimes, depending on whether php finished
+# writing before grep bailed. It cost two provisioning runs to find.
+PHP_MODULES="$(php -m)"
+
 MISSING=()
 for ext in pdo_pgsql bcmath mbstring gd intl zip; do
-    if php -m | grep -qi "^${ext}$"; then
+    if grep -qi "^${ext}$" <<< "$PHP_MODULES"; then
         echo "  ok   ${ext}"
     else
         echo "  MISSING ${ext}"
@@ -111,9 +121,10 @@ if (( ${#MISSING[@]} > 0 )); then
 
     systemctl restart "php${PHP_VERSION}-fpm" 2>/dev/null || true
 
+    PHP_MODULES="$(php -m)"
     STILL_MISSING=()
     for ext in "${MISSING[@]}"; do
-        php -m | grep -qi "^${ext}$" || STILL_MISSING+=("$ext")
+        grep -qi "^${ext}$" <<< "$PHP_MODULES" || STILL_MISSING+=("$ext")
     done
 
     if (( ${#STILL_MISSING[@]} > 0 )); then
@@ -175,7 +186,9 @@ npx --yes puppeteer@latest browsers install chrome >/tmp/chrome-install.log 2>&1
     exit 1
 }
 
-CHROME_PATH="$(find /opt/puppeteer -type f -name chrome -perm -u+x | head -1)"
+# -print -quit rather than `| head -1`, for the same SIGPIPE reason as above:
+# head exits after one line and would take find down with it.
+CHROME_PATH="$(find /opt/puppeteer -type f -name chrome -perm -u+x -print -quit)"
 if [[ -z "$CHROME_PATH" ]]; then
     echo "Chrome installed but the binary could not be located under /opt/puppeteer" >&2
     exit 1
@@ -196,10 +209,15 @@ if [[ ! -f "$DB_PASS_FILE" ]]; then
 fi
 DB_PASS="$(cat "$DB_PASS_FILE")"
 
-sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'" | grep -q 1 \
-    || sudo -u postgres psql -qc "CREATE ROLE ${DB_USER} LOGIN PASSWORD '${DB_PASS}';"
-sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='${DB_NAME}'" | grep -q 1 \
-    || sudo -u postgres createdb -O "${DB_USER}" "${DB_NAME}"
+ROLE_EXISTS="$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'")"
+if [[ "$ROLE_EXISTS" != "1" ]]; then
+    sudo -u postgres psql -qc "CREATE ROLE ${DB_USER} LOGIN PASSWORD '${DB_PASS}';"
+fi
+
+DB_EXISTS="$(sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='${DB_NAME}'")"
+if [[ "$DB_EXISTS" != "1" ]]; then
+    sudo -u postgres createdb -O "${DB_USER}" "${DB_NAME}"
+fi
 
 log "Database password written to ${DB_PASS_FILE} (root only)"
 
