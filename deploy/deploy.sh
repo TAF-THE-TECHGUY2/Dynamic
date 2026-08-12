@@ -24,6 +24,17 @@ cd "$APP_DIR"
 
 log() { printf '\n\033[1;31m==>\033[0m %s\n' "$1"; }
 
+# `sudo -u www-data` leaves HOME pointing at the invoking user's home unless
+# -H is passed, and www-data cannot write /home/ubuntu. Composer and npm both
+# fail on their cache directories, and the deploy dies before vendor/ exists —
+# which then surfaces as a 500 from a missing autoload.php, nowhere near the
+# actual cause. Set them explicitly rather than depending on how we were called.
+if [[ "$(id -un)" == "www-data" ]]; then
+    export HOME=/var/www
+    export COMPOSER_HOME=/var/www/.composer
+    export npm_config_cache=/var/www/.npm
+fi
+
 if [[ ! -f .env ]]; then
     echo "No .env. Copy .env.example and fill it in before deploying." >&2
     exit 1
