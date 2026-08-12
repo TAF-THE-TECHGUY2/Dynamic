@@ -31,8 +31,27 @@ While waiting, verify the sending domain and turn on DKIM.
 | AMI | Ubuntu Server 24.04 LTS | PHP 8.3 is in main, no third-party PPA |
 | Type | **t3.small** (2 vCPU, 2GB) | 2GB is the floor. Chromium peaks over 500MB rendering a PDF. |
 | Storage | 20GB gp3 | |
-| Security group | 22 from **your IP only**, 80 and 443 from anywhere | |
+| IAM role | Instance profile with `AmazonSSMManagedInstanceCore` | Browser terminal, no SSH |
+| Key pair | **None needed** | Session Manager replaces it |
+| Security group | 80 and 443 only — **no port 22** | Nothing to brute-force |
 | Elastic IP | Allocate and associate | Otherwise the public IP changes on stop/start and DNS breaks |
+
+### Connecting without SSH
+
+Everything below can be run from the AWS console: **EC2 → the instance →
+Connect → Session Manager**. That needs two things, both set at launch time:
+
+1. An IAM role attached to the instance containing the AWS-managed policy
+   **`AmazonSSMManagedInstanceCore`**.
+2. Outbound internet, which a default VPC public subnet already has.
+
+Ubuntu 24.04 AMIs ship the SSM agent, so nothing else is required. The session
+opens as `ssm-user`; switch to the deploy user with `sudo su - ubuntu` or just
+prefix with `sudo`.
+
+Port 22 can stay closed permanently. If Session Manager ever fails to connect,
+it is almost always the missing IAM role — the instance shows as "not managed"
+under Systems Manager → Fleet Manager.
 
 `provision.sh` adds a 2GB swap file. On a 2GB box that is not optional — without
 it the kernel OOM-kills the queue worker mid-render, and the only symptom is
@@ -54,10 +73,17 @@ server are the thing you least want leaked.
 
 ## 2. Provision
 
+In the Session Manager terminal. The script fetches itself from the repo, so
+there is nothing to copy up:
+
 ```bash
-scp -i your-key.pem deploy/provision.sh ubuntu@<elastic-ip>:~
-ssh -i your-key.pem ubuntu@<elastic-ip> 'sudo bash provision.sh'
+curl -fsSL https://raw.githubusercontent.com/TAF-THE-TECHGUY2/Dynamic/main/deploy/provision.sh \
+    -o /tmp/provision.sh
+sudo bash /tmp/provision.sh
 ```
+
+(With SSH available instead, `scp deploy/provision.sh ubuntu@<host>:~` and
+`sudo bash provision.sh` does the same thing.)
 
 It installs PHP 8.3 (with **bcmath** — the money arithmetic depends on it),
 PostgreSQL 16, nginx, Node 22, Composer, headless Chromium and its libraries;
@@ -73,7 +99,6 @@ for the next step.
 ## 3. Environment
 
 ```bash
-ssh -i your-key.pem ubuntu@<elastic-ip>
 sudo -u www-data cp /var/www/dynamic/.env.example /var/www/dynamic/.env
 sudo -u www-data nano /var/www/dynamic/.env
 ```

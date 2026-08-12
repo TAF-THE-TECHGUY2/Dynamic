@@ -2,6 +2,13 @@
 #
 # One-time provisioning for a fresh Ubuntu 24.04 EC2 instance.
 #
+# From the AWS console (EC2 -> Connect -> Session Manager), no SSH required:
+#
+#   curl -fsSL https://raw.githubusercontent.com/TAF-THE-TECHGUY2/Dynamic/main/deploy/provision.sh -o /tmp/provision.sh
+#   sudo bash /tmp/provision.sh
+#
+# Or over SSH:
+#
 #   scp deploy/provision.sh ubuntu@<host>:~
 #   ssh ubuntu@<host> 'sudo bash provision.sh'
 #
