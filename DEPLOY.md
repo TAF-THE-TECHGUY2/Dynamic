@@ -236,6 +236,18 @@ A few tens of kilobytes starting with `%PDF-` means it works.
 
 ## Things that will bite
 
+**The Composer platform pin.** `composer.json` sets
+`config.platform.php` to **8.3.6**, the PHP Ubuntu 24.04 ships. That is not
+decoration: Composer resolves the lock against whatever PHP the developer
+happens to run, and on a newer local PHP it locks Symfony 8.x, which requires
+>= 8.4.1. `composer install` on the server then fails with twenty-odd
+unsatisfiable constraints and no vendor directory — which surfaces as a 500
+from a missing autoload.php, nowhere near the real cause.
+
+If you move the server to a newer PHP, raise the pin and re-run
+`composer update` **on a machine, not the server**, then commit the lock.
+Never run `composer update` in production.
+
 **Chromium.** `LARAVEL_PDF_CHROME_PATH` contains a version number, so
 reinstalling Chrome moves it and PDFs start failing on the queue while the site
 looks perfectly healthy. Check `failed_jobs` and `/var/log/dynamic-queue.log`.
