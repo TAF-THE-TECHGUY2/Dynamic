@@ -1,0 +1,23 @@
+[Unit]
+Description=Dynamic Solutions queue worker
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=__APP_USER__
+Group=__APP_USER__
+WorkingDirectory=__APP_DIR__
+
+# Renders PDFs through headless Chromium, uploads them to S3 and sends the
+# issue emails. --tries=3 matches the job's own backoff; --max-time recycles
+# the worker hourly so a leaked Chromium process cannot accumulate.
+ExecStart=/usr/bin/php __APP_DIR__/artisan queue:work database \
+    --queue=default --tries=3 --timeout=120 --sleep=3 --max-time=3600
+
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/dynamic-queue.log
+StandardError=append:/var/log/dynamic-queue.log
+
+[Install]
+WantedBy=multi-user.target

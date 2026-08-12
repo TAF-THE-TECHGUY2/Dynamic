@@ -1,0 +1,501 @@
+[
+  {
+    "name": "inclusive \u2014 12000L at 23.70",
+    "lines": [
+      {
+        "litres": "12000",
+        "price_per_litre": "23.7000"
+      }
+    ],
+    "vat_mode": "inclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 24730435,
+      "vat_cents": 3709565,
+      "total_cents": 28440000,
+      "line_amounts_cents": [
+        28440000
+      ]
+    }
+  },
+  {
+    "name": "none \u2014 3500L at 23.50 (matches existing paper quote)",
+    "lines": [
+      {
+        "litres": "3500",
+        "price_per_litre": "23.5000"
+      }
+    ],
+    "vat_mode": "none",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 8225000,
+      "vat_cents": 0,
+      "total_cents": 8225000,
+      "line_amounts_cents": [
+        8225000
+      ]
+    }
+  },
+  {
+    "name": "exclusive \u2014 3500L at 23.50",
+    "lines": [
+      {
+        "litres": "3500",
+        "price_per_litre": "23.5000"
+      }
+    ],
+    "vat_mode": "exclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 8225000,
+      "vat_cents": 1233750,
+      "total_cents": 9458750,
+      "line_amounts_cents": [
+        8225000
+      ]
+    }
+  },
+  {
+    "name": "inclusive \u2014 3500L at 23.50",
+    "lines": [
+      {
+        "litres": "3500",
+        "price_per_litre": "23.5000"
+      }
+    ],
+    "vat_mode": "inclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 7152174,
+      "vat_cents": 1072826,
+      "total_cents": 8225000,
+      "line_amounts_cents": [
+        8225000
+      ]
+    }
+  },
+  {
+    "name": "inclusive \u2014 fractional litres 1234.56 at 23.7000",
+    "lines": [
+      {
+        "litres": "1234.56",
+        "price_per_litre": "23.7000"
+      }
+    ],
+    "vat_mode": "inclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 2544267,
+      "vat_cents": 381640,
+      "total_cents": 2925907,
+      "line_amounts_cents": [
+        2925907
+      ]
+    }
+  },
+  {
+    "name": "none \u2014 fractional litres 987.65 at 22.1450",
+    "lines": [
+      {
+        "litres": "987.65",
+        "price_per_litre": "22.1450"
+      }
+    ],
+    "vat_mode": "none",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 2187151,
+      "vat_cents": 0,
+      "total_cents": 2187151,
+      "line_amounts_cents": [
+        2187151
+      ]
+    }
+  },
+  {
+    "name": "none \u2014 zero litres",
+    "lines": [
+      {
+        "litres": "0",
+        "price_per_litre": "23.7000"
+      }
+    ],
+    "vat_mode": "none",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 0,
+      "vat_cents": 0,
+      "total_cents": 0,
+      "line_amounts_cents": [
+        0
+      ]
+    }
+  },
+  {
+    "name": "inclusive \u2014 zero-priced delivery line alongside a real load",
+    "lines": [
+      {
+        "litres": "12000",
+        "price_per_litre": "23.7000"
+      },
+      {
+        "litres": null,
+        "price_per_litre": null,
+        "amount_cents": 0
+      }
+    ],
+    "vat_mode": "inclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 24730435,
+      "vat_cents": 3709565,
+      "total_cents": 28440000,
+      "line_amounts_cents": [
+        28440000,
+        0
+      ]
+    }
+  },
+  {
+    "name": "inclusive \u2014 two grades on one document",
+    "lines": [
+      {
+        "litres": "12000",
+        "price_per_litre": "23.7000"
+      },
+      {
+        "litres": "6500",
+        "price_per_litre": "23.2000"
+      }
+    ],
+    "vat_mode": "inclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 37843478,
+      "vat_cents": 5676522,
+      "total_cents": 43520000,
+      "line_amounts_cents": [
+        28440000,
+        15080000
+      ]
+    }
+  },
+  {
+    "name": "exclusive \u2014 three lines including a flat delivery charge",
+    "lines": [
+      {
+        "litres": "9000",
+        "price_per_litre": "20.6087"
+      },
+      {
+        "litres": "1500",
+        "price_per_litre": "20.1500"
+      },
+      {
+        "litres": null,
+        "price_per_litre": null,
+        "amount_cents": 85000
+      }
+    ],
+    "vat_mode": "exclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 21655330,
+      "vat_cents": 3248300,
+      "total_cents": 24903630,
+      "line_amounts_cents": [
+        18547830,
+        3022500,
+        85000
+      ]
+    }
+  },
+  {
+    "name": "inclusive \u2014 line lands on an exact half cent (1000.05L at 23.7000)",
+    "lines": [
+      {
+        "litres": "1000.05",
+        "price_per_litre": "23.7000"
+      }
+    ],
+    "vat_mode": "inclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 2060973,
+      "vat_cents": 309146,
+      "total_cents": 2370119,
+      "line_amounts_cents": [
+        2370119
+      ]
+    }
+  },
+  {
+    "name": "none \u2014 line lands on an exact half cent (1.00L at 0.0050)",
+    "lines": [
+      {
+        "litres": "1.00",
+        "price_per_litre": "0.0050"
+      }
+    ],
+    "vat_mode": "none",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 1,
+      "vat_cents": 0,
+      "total_cents": 1,
+      "line_amounts_cents": [
+        1
+      ]
+    }
+  },
+  {
+    "name": "none \u2014 three half-cent lines each round up before summing",
+    "lines": [
+      {
+        "litres": "1.00",
+        "price_per_litre": "0.0050"
+      },
+      {
+        "litres": "1.00",
+        "price_per_litre": "0.0050"
+      },
+      {
+        "litres": "1.00",
+        "price_per_litre": "0.0050"
+      }
+    ],
+    "vat_mode": "none",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 3,
+      "vat_cents": 0,
+      "total_cents": 3,
+      "line_amounts_cents": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  {
+    "name": "exclusive \u2014 VAT itself lands on an exact half cent",
+    "lines": [
+      {
+        "litres": "1.00",
+        "price_per_litre": "0.1000"
+      }
+    ],
+    "vat_mode": "exclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 10,
+      "vat_cents": 2,
+      "total_cents": 12,
+      "line_amounts_cents": [
+        10
+      ]
+    }
+  },
+  {
+    "name": "none \u2014 8.7L at 1.1500 lands on a half cent a float would lose",
+    "lines": [
+      {
+        "litres": "8.70",
+        "price_per_litre": "1.1500"
+      }
+    ],
+    "vat_mode": "none",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 1001,
+      "vat_cents": 0,
+      "total_cents": 1001,
+      "line_amounts_cents": [
+        1001
+      ]
+    }
+  },
+  {
+    "name": "inclusive \u2014 very large order, 999999.99L at 25.0000",
+    "lines": [
+      {
+        "litres": "999999.99",
+        "price_per_litre": "25.0000"
+      }
+    ],
+    "vat_mode": "inclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 2173913022,
+      "vat_cents": 326086953,
+      "total_cents": 2499999975,
+      "line_amounts_cents": [
+        2499999975
+      ]
+    }
+  },
+  {
+    "name": "exclusive \u2014 very large order, 999999.99L at 25.0000",
+    "lines": [
+      {
+        "litres": "999999.99",
+        "price_per_litre": "25.0000"
+      }
+    ],
+    "vat_mode": "exclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 2499999975,
+      "vat_cents": 374999996,
+      "total_cents": 2874999971,
+      "line_amounts_cents": [
+        2499999975
+      ]
+    }
+  },
+  {
+    "name": "inclusive \u2014 price carrying more than four decimals is rounded half up",
+    "lines": [
+      {
+        "litres": "10000",
+        "price_per_litre": "23.70005"
+      }
+    ],
+    "vat_mode": "inclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 20608783,
+      "vat_cents": 3091317,
+      "total_cents": 23700100,
+      "line_amounts_cents": [
+        23700100
+      ]
+    }
+  },
+  {
+    "name": "none \u2014 litres carrying more than two decimals is rounded half up",
+    "lines": [
+      {
+        "litres": "1000.005",
+        "price_per_litre": "23.0000"
+      }
+    ],
+    "vat_mode": "none",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 2300023,
+      "vat_cents": 0,
+      "total_cents": 2300023,
+      "line_amounts_cents": [
+        2300023
+      ]
+    }
+  },
+  {
+    "name": "exclusive \u2014 legacy 14% rate",
+    "lines": [
+      {
+        "litres": "5000",
+        "price_per_litre": "18.5000"
+      }
+    ],
+    "vat_mode": "exclusive",
+    "vat_rate": "0.14",
+    "expect": {
+      "subtotal_cents": 9250000,
+      "vat_cents": 1295000,
+      "total_cents": 10545000,
+      "line_amounts_cents": [
+        9250000
+      ]
+    }
+  },
+  {
+    "name": "exclusive \u2014 zero rate behaves like no VAT",
+    "lines": [
+      {
+        "litres": "5000",
+        "price_per_litre": "18.5000"
+      }
+    ],
+    "vat_mode": "exclusive",
+    "vat_rate": "0.0000",
+    "expect": {
+      "subtotal_cents": 9250000,
+      "vat_cents": 0,
+      "total_cents": 9250000,
+      "line_amounts_cents": [
+        9250000
+      ]
+    }
+  },
+  {
+    "name": "none \u2014 a negative credit line",
+    "lines": [
+      {
+        "litres": "12000",
+        "price_per_litre": "23.7000"
+      },
+      {
+        "litres": null,
+        "price_per_litre": null,
+        "amount_cents": -50000
+      }
+    ],
+    "vat_mode": "none",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 28390000,
+      "vat_cents": 0,
+      "total_cents": 28390000,
+      "line_amounts_cents": [
+        28440000,
+        -50000
+      ]
+    }
+  },
+  {
+    "name": "inclusive \u2014 a negative line landing on a half cent rounds towards +infinity",
+    "lines": [
+      {
+        "litres": "-1.00",
+        "price_per_litre": "0.0050"
+      }
+    ],
+    "vat_mode": "inclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 0,
+      "vat_cents": 0,
+      "total_cents": 0,
+      "line_amounts_cents": [
+        0
+      ]
+    }
+  },
+  {
+    "name": "none \u2014 no lines at all",
+    "lines": [],
+    "vat_mode": "none",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 0,
+      "vat_cents": 0,
+      "total_cents": 0,
+      "line_amounts_cents": []
+    }
+  },
+  {
+    "name": "inclusive \u2014 no lines at all",
+    "lines": [],
+    "vat_mode": "inclusive",
+    "vat_rate": "0.15",
+    "expect": {
+      "subtotal_cents": 0,
+      "vat_cents": 0,
+      "total_cents": 0,
+      "line_amounts_cents": []
+    }
+  }
+]

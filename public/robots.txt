@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Customer document links and the admin console are not for indexing.
+Disallow: /d/
+Disallow: /admin
+Disallow: /login

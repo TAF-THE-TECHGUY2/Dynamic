@@ -1,0 +1,1685 @@
+/* ---------------------------------------------------------------------------
+ * Dynamic Solutions — component layer.
+ *
+ * A direct port of design/mockup.html. Hand-written, compact, shared by the
+ * Blade public site and the React admin console so there is one visual
+ * language and no drift between them.
+ *
+ * Rules carried over from the mockup and enforced here:
+ *   · every number renders in var(--font-mono)
+ *   · headings and labels are var(--font-display), uppercase, letter-spaced
+ *   · body copy is var(--font-body) at line-height 1.62
+ *   · cards carry a 4px red top border and border-radius 0
+ *   · the red diagonal slash (skewX(-16deg)) appears three times only:
+ *     the logo lockup, beneath a document title, and once in the hero
+ * ------------------------------------------------------------------------- */
+
+@layer components {
+    /* ===================== brand primitives ============================== */
+
+    .ds-mark {
+        font-family: var(--font-display);
+        transform: skewX(-10deg);
+        letter-spacing: -0.05em;
+        line-height: 0.9;
+    }
+
+    .ds-mark .d {
+        color: var(--color-ds-red);
+    }
+
+    /* motif 1 of 3 — the logo lockup slash */
+    .ds-slash {
+        background: var(--color-ds-red);
+        transform: skewX(-16deg);
+        flex: none;
+    }
+
+    .ds-logo {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+
+    .ds-logo .w1 {
+        font-family: var(--font-display);
+        line-height: 1;
+    }
+
+    .ds-logo .w2 {
+        font-weight: 600;
+        letter-spacing: 0.4em;
+        margin-top: 2px;
+    }
+
+    .ds-eyebrow {
+        font-family: var(--font-body);
+        font-weight: 700;
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--color-ds-red-deep);
+    }
+
+    .ds-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: 0;
+        border-radius: 3px;
+        font-family: var(--font-display);
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+        font-size: 11px;
+        padding: 13px 22px;
+        cursor: pointer;
+        text-decoration: none;
+        transition:
+            background-color 0.12s ease,
+            color 0.12s ease;
+    }
+
+    .ds-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+
+    .ds-btn-red {
+        background: var(--color-ds-red);
+        color: #fff;
+    }
+
+    .ds-btn-red:hover:not(:disabled) {
+        background: var(--color-ds-red-deep);
+    }
+
+    .ds-btn-out {
+        background: none;
+        border: 2px solid #fff;
+        color: #fff;
+    }
+
+    .ds-btn-out:hover:not(:disabled) {
+        background: #fff;
+        color: var(--color-ds-ink);
+    }
+
+    .ds-btn-dark {
+        background: var(--color-ds-ink);
+        color: #fff;
+    }
+
+    .ds-btn-dark:hover:not(:disabled) {
+        background: #000;
+    }
+
+    .ds-btn-ghost {
+        background: none;
+        border: 1px solid var(--color-ds-line);
+        color: var(--color-ds-steel);
+    }
+
+    .ds-btn-ghost:hover:not(:disabled) {
+        border-color: var(--color-ds-ink);
+        color: var(--color-ds-ink);
+    }
+
+    .ds-linkred {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--color-ds-red);
+        background: none;
+        border: 0;
+        padding: 0;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .ds-linkred:hover {
+        color: var(--color-ds-red-deep);
+    }
+
+    /* ===================== public site =================================== */
+
+    /* The mockup has one palette and no dark variant, so the DS layer states
+     * its own colours rather than inheriting the starter kit's themeable
+     * --foreground. Without this, every heading that does not set a colour of
+     * its own turns white when the visitor's OS is in dark mode. */
+    .ds-shell {
+        background: #fff;
+        color: var(--color-ds-ink);
+
+        /* The mockup's 1180px frame was the viewer's simulated browser window,
+         * not the design. Capping the page at 1180px instead leaves the dark
+         * hero and the red trust bar stranded in white gutters on any wider
+         * screen. So the sections run full bleed and their padding grows to
+         * hold the content itself to a 1180px column.
+         *
+         * --ds-bleed is what each side gains beyond the column; --ds-edge adds
+         * the 34px the mockup already had inside the frame. Both resolve
+         * against the shell's width rather than 100vw, so a desktop scrollbar
+         * cannot push the page into a horizontal scroll. */
+        --ds-bleed: max(0px, calc((100% - 1180px) / 2));
+        --ds-edge: calc(var(--ds-bleed) + 34px);
+    }
+
+    .ds-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px var(--ds-edge);
+        background: #fff;
+        border-bottom: 1px solid var(--color-ds-line);
+    }
+
+    .ds-nav .ds-mark {
+        font-size: 28px;
+    }
+
+    .ds-nav .ds-slash {
+        width: 5px;
+        height: 24px;
+    }
+
+    .ds-nav .w1 {
+        font-size: 17px;
+    }
+
+    .ds-nav .w2 {
+        font-size: 7.5px;
+    }
+
+    .ds-nav nav {
+        display: flex;
+        gap: 26px;
+        align-items: center;
+    }
+
+    .ds-nav nav a {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--color-ds-steel);
+        text-decoration: none;
+    }
+
+    .ds-nav nav a:hover,
+    .ds-nav nav a.act {
+        color: var(--color-ds-red);
+    }
+
+    .ds-callbtn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--color-ds-red);
+        color: #fff;
+        padding: 10px 16px;
+        border-radius: 3px;
+        text-decoration: none;
+    }
+
+    .ds-callbtn:hover {
+        background: var(--color-ds-red-deep);
+    }
+
+    .ds-callbtn .n {
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .ds-callbtn .l {
+        font-size: 8px;
+        letter-spacing: 0.14em;
+        font-weight: 700;
+        opacity: 0.85;
+    }
+
+    .ds-navtoggle {
+        display: none;
+        background: none;
+        border: 1px solid var(--color-ds-line);
+        border-radius: 3px;
+        padding: 8px 10px;
+        color: var(--color-ds-ink);
+        cursor: pointer;
+    }
+
+    .ds-hero {
+        background: var(--color-ds-ink);
+        color: #fff;
+        padding: 56px var(--ds-edge) 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* motif 2 of 3 — the hero diagonal.
+     *
+     * Anchored to the content column, not the viewport, so it keeps the same
+     * relationship to the pump panel that the mockup has and still bleeds off
+     * the edge. Pinned to the viewport it drifts away into open space on a
+     * wide screen and stops reading as part of the composition. */
+    .ds-hero .diag {
+        position: absolute;
+        top: -60px;
+        right: calc(var(--ds-bleed) - 120px);
+        width: 420px;
+        height: 520px;
+        background: var(--color-ds-red);
+        transform: skewX(-16deg);
+        opacity: 0.16;
+        pointer-events: none;
+    }
+
+    .ds-hero .inner {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 44px;
+        align-items: center;
+        position: relative;
+    }
+
+    .ds-hero h1 {
+        font-family: var(--font-display);
+        font-size: 70px;
+        line-height: 0.9;
+        letter-spacing: -0.02em;
+        margin: 12px 0 0;
+    }
+
+    .ds-hero h1 span {
+        color: var(--color-ds-red);
+    }
+
+    .ds-hero .lede {
+        font-size: 16px;
+        line-height: 1.65;
+        color: #c4cad0;
+        margin: 18px 0 26px;
+        max-width: 400px;
+    }
+
+    .ds-hero .cta {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding-bottom: 44px;
+    }
+
+    /* ---- the pump counter -------------------------------------------- */
+
+    .ds-pump {
+        background: #0a0c0e;
+        border: 1px solid #2a3037;
+        border-radius: 4px;
+        padding: 22px 24px 20px;
+        position: relative;
+    }
+
+    .ds-pump .rule {
+        height: 3px;
+        background: var(--color-ds-red);
+    }
+
+    .ds-pump .grade {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        margin: 14px 0 2px;
+    }
+
+    .ds-pump .gname {
+        font-family: var(--font-display);
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        color: #fff;
+    }
+
+    .ds-pump .gsub {
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        font-weight: 700;
+        color: var(--color-ds-mute);
+    }
+
+    .ds-pump .digits {
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: 48px;
+        line-height: 1;
+        color: var(--color-ds-red);
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .ds-pump .digits small {
+        font-size: 15px;
+        color: var(--color-ds-mute);
+        letter-spacing: 0.1em;
+        margin-left: 6px;
+        font-weight: 500;
+    }
+
+    .ds-pump .second {
+        border-top: 1px solid #22282e;
+        margin-top: 16px;
+        padding-top: 14px;
+    }
+
+    .ds-pump .second .digits {
+        font-size: 30px;
+        color: #fff;
+    }
+
+    .ds-pump .stamp {
+        font-family: var(--font-mono);
+        font-size: 9px;
+        color: var(--color-ds-mute);
+        letter-spacing: 0.05em;
+        margin-top: 16px;
+        border-top: 1px solid #22282e;
+        padding-top: 11px;
+    }
+
+    .ds-trust {
+        background: var(--color-ds-red);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
+        padding-inline: var(--ds-bleed);
+    }
+
+    .ds-trust .t {
+        padding: 20px 22px;
+        background: var(--color-ds-red);
+    }
+
+    .ds-trust .t + .t {
+        box-shadow: -1px 0 0 rgb(255 255 255 / 0.24);
+    }
+
+    .ds-trust .k {
+        font-family: var(--font-display);
+        font-size: 12px;
+        letter-spacing: 0.09em;
+        color: #fff;
+    }
+
+    .ds-trust .v {
+        font-size: 11px;
+        color: #fff;
+        margin-top: 3px;
+        letter-spacing: 0.04em;
+        font-weight: 500;
+    }
+
+    .ds-sec {
+        padding: 52px var(--ds-edge);
+    }
+
+    .ds-sec h2 {
+        font-family: var(--font-display);
+        font-size: 32px;
+        line-height: 1.02;
+        letter-spacing: -0.01em;
+        margin: 8px 0 0;
+    }
+
+    .ds-sec .intro {
+        font-size: 14px;
+        color: var(--color-ds-steel);
+        line-height: 1.65;
+        max-width: 520px;
+        margin: 12px 0 0;
+    }
+
+    .ds-sec p,
+    .ds-prose p {
+        line-height: 1.62;
+    }
+
+    .ds-svcs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-top: 30px;
+    }
+
+    .ds-svc {
+        border: 1px solid var(--color-ds-line);
+        border-top: 4px solid var(--color-ds-red);
+        border-radius: 0;
+        padding: 24px 22px 26px;
+        background: #fff;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .ds-svc:hover {
+        border-color: var(--color-ds-ink);
+        border-top-color: var(--color-ds-red);
+    }
+
+    .ds-svc .ic {
+        color: var(--color-ds-red);
+        margin-bottom: 14px;
+        display: block;
+    }
+
+    .ds-svc h3 {
+        font-family: var(--font-display);
+        font-size: 15px;
+        letter-spacing: 0.03em;
+        margin: 0 0 8px;
+        text-transform: uppercase;
+    }
+
+    .ds-svc p {
+        font-size: 13px;
+        line-height: 1.62;
+        color: var(--color-ds-steel);
+        margin: 0 0 14px;
+    }
+
+    .ds-svc .go {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--color-ds-red);
+    }
+
+    /* Two full-bleed halves with the content still inside the column.
+     *
+     * The mist/ink seam is painted as a gradient on the container rather than
+     * as a background on each half: the halves are grid items, so a percentage
+     * inside them resolves against their own column and --ds-edge would
+     * collapse to 34px, throwing the text against the viewport edge. The
+     * container's 50% is the viewport centre, which is exactly where the two
+     * equal columns meet. */
+    .ds-split {
+        background: linear-gradient(
+            to right,
+            var(--color-ds-mist) 0 50%,
+            var(--color-ds-ink) 50% 100%
+        );
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        padding-inline: var(--ds-edge);
+    }
+
+    .ds-split .l {
+        padding: 48px 34px 48px 0;
+    }
+
+    .ds-split .r {
+        color: #fff;
+        padding: 48px 0 48px 34px;
+    }
+
+    .ds-split .r .list {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0 0;
+    }
+
+    .ds-split .r .list li {
+        display: flex;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px solid #262c33;
+        font-size: 13px;
+        color: #c4cad0;
+        line-height: 1.62;
+    }
+
+    .ds-split .r .list li b {
+        color: #fff;
+        font-weight: 600;
+        min-width: 112px;
+        font-size: 13px;
+    }
+
+    .ds-addr {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        line-height: 1.9;
+        color: var(--color-ds-ink);
+        margin-top: 18px;
+    }
+
+    .ds-footcta {
+        background: var(--color-ds-ink);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 30px var(--ds-edge);
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .ds-footcta .big {
+        font-family: var(--font-display);
+        font-size: 26px;
+        letter-spacing: 0.02em;
+    }
+
+    .ds-footcta .big em {
+        font-style: normal;
+        color: var(--color-ds-red-tint);
+    }
+
+    .ds-footer {
+        background: #0a0c0e;
+        color: #8a9096;
+        padding: 34px var(--ds-edge);
+        font-size: 12px;
+        line-height: 1.62;
+    }
+
+    .ds-footer a {
+        color: #c4cad0;
+        text-decoration: none;
+    }
+
+    .ds-footer a:hover {
+        color: #fff;
+    }
+
+    .ds-footer .cols {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr 1fr;
+        gap: 28px;
+    }
+
+    .ds-footer h2 {
+        font-family: var(--font-display);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #fff;
+        margin: 0 0 10px;
+    }
+
+    .ds-footer .legal {
+        border-top: 1px solid #22282e;
+        margin-top: 26px;
+        padding-top: 16px;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.04em;
+        color: var(--color-ds-mute);
+    }
+
+    .ds-footer p a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+    }
+
+    .ds-split .r .ds-eyebrow {
+        color: var(--color-ds-red-tint);
+    }
+
+    /* ===================== admin console ================================= */
+
+    .ds-admin {
+        display: grid;
+        grid-template-columns: 212px 1fr;
+        min-height: 100vh;
+        background: var(--color-ds-mist);
+        color: var(--color-ds-ink);
+    }
+
+    .ds-side {
+        background: var(--color-ds-ink);
+        color: #fff;
+        padding: 20px 0 0;
+    }
+
+    .ds-side .brand {
+        padding: 0 18px 20px;
+        border-bottom: 1px solid #262c33;
+        margin-bottom: 14px;
+    }
+
+    .ds-side .ds-mark {
+        font-size: 24px;
+    }
+
+    .ds-side .ds-slash {
+        width: 4px;
+        height: 20px;
+    }
+
+    .ds-side .w1 {
+        font-size: 14px;
+        color: #fff;
+    }
+
+    .ds-side .w2 {
+        font-size: 6.5px;
+        color: var(--color-ds-mute);
+    }
+
+    .ds-side .tagsm {
+        font-size: 8px;
+        letter-spacing: 0.14em;
+        font-weight: 700;
+        color: #5c6469;
+        margin-top: 9px;
+    }
+
+    .ds-side .grp {
+        font-size: 9px;
+        letter-spacing: 0.18em;
+        font-weight: 700;
+        color: #5c6469;
+        padding: 14px 18px 7px;
+        text-transform: uppercase;
+    }
+
+    .ds-side a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 18px;
+        font-size: 13px;
+        color: #a8b0b8;
+        text-decoration: none;
+        border-left: 3px solid transparent;
+        font-weight: 500;
+    }
+
+    .ds-side a:hover {
+        color: #fff;
+        background: #1a1e23;
+    }
+
+    .ds-side a.act {
+        color: #fff;
+        background: #1a1e23;
+        border-left-color: var(--color-ds-red);
+    }
+
+    .ds-side a svg {
+        width: 15px;
+        height: 15px;
+        flex: none;
+    }
+
+    .ds-side .who {
+        margin-top: 26px;
+        padding: 14px 18px;
+        border-top: 1px solid #262c33;
+        font-size: 11px;
+        color: #6e767e;
+    }
+
+    .ds-side .who b {
+        display: block;
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .ds-main {
+        padding: 24px 28px 44px;
+        overflow: hidden;
+    }
+
+    .ds-crumb {
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--color-ds-mute);
+        font-weight: 600;
+    }
+
+    .ds-mainhead {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 20px;
+        margin: 6px 0 22px;
+        flex-wrap: wrap;
+    }
+
+    .ds-mainhead h1 {
+        font-family: var(--font-display);
+        font-size: 26px;
+        letter-spacing: -0.01em;
+        margin: 4px 0 0;
+    }
+
+    .ds-cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .ds-cards-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .ds-card {
+        background: #fff;
+        border: 1px solid var(--color-ds-line);
+        border-radius: 4px;
+        padding: 16px 18px;
+    }
+
+    .ds-card .k {
+        font-size: 10px;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--color-ds-mute);
+        font-weight: 600;
+    }
+
+    .ds-card .v {
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: 25px;
+        margin-top: 7px;
+        letter-spacing: -0.02em;
+    }
+
+    .ds-card .d {
+        font-size: 11px;
+        margin-top: 5px;
+        font-weight: 600;
+    }
+
+    .ds-card .d.up {
+        color: var(--color-ds-green);
+    }
+
+    .ds-card .d.dn {
+        color: var(--color-ds-red);
+    }
+
+    .ds-card .d.flat {
+        color: var(--color-ds-mute);
+    }
+
+    .ds-two {
+        display: grid;
+        grid-template-columns: 1.55fr 1fr;
+        gap: 16px;
+        margin-top: 16px;
+        align-items: start;
+    }
+
+    .ds-pane {
+        background: #fff;
+        border: 1px solid var(--color-ds-line);
+        border-radius: 4px;
+    }
+
+    .ds-pane .ph {
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--color-ds-line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .ds-pane .ph h3 {
+        font-family: var(--font-display);
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin: 0;
+    }
+
+    .ds-pane .pb {
+        padding: 16px 18px;
+    }
+
+    .ds-tbl {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .ds-tbl th {
+        font-size: 9.5px;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--color-ds-mute);
+        font-weight: 600;
+        text-align: right;
+        padding: 0 18px 9px;
+        white-space: nowrap;
+    }
+
+    .ds-tbl th:first-child {
+        text-align: left;
+    }
+
+    .ds-tbl td {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        padding: 11px 18px;
+        border-top: 1px solid var(--color-ds-line);
+        text-align: right;
+        color: var(--color-ds-ink);
+    }
+
+    .ds-tbl td:first-child {
+        text-align: left;
+    }
+
+    .ds-tbl tr:hover td {
+        background: #fafbfb;
+    }
+
+    .ds-tbl .empty td {
+        text-align: center;
+        color: var(--color-ds-mute);
+        padding: 34px 18px;
+        font-family: var(--font-body);
+    }
+
+    .ds-cust {
+        font-family: var(--font-body);
+        font-weight: 600;
+        font-size: 12.5px;
+    }
+
+    .ds-qref {
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        color: var(--color-ds-mute);
+        margin-top: 1px;
+    }
+
+    .ds-pill {
+        display: inline-block;
+        font-family: var(--font-body);
+        font-size: 9.5px;
+        font-weight: 700;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+        padding: 4px 9px;
+        border-radius: 2px;
+        white-space: nowrap;
+    }
+
+    .ds-pill.new {
+        background: var(--color-ds-red-tint);
+        color: var(--color-ds-red-deep);
+    }
+
+    .ds-pill.sent {
+        background: #e6f1fb;
+        color: #0c447c;
+    }
+
+    .ds-pill.paid {
+        background: #e1f5ee;
+        color: #0f6e56;
+    }
+
+    .ds-pill.exp {
+        background: var(--color-ds-mist);
+        color: var(--color-ds-steel);
+    }
+
+    /* ---- the dark price panel ----------------------------------------- */
+
+    .ds-priceset {
+        background: var(--color-ds-ink);
+        color: #fff;
+        border-radius: 4px;
+        padding: 18px;
+    }
+
+    .ds-priceset .ph3 {
+        font-family: var(--font-display);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #fff;
+        margin: 0 0 3px;
+    }
+
+    .ds-priceset .note {
+        font-size: 10.5px;
+        color: var(--color-ds-mute);
+        line-height: 1.5;
+        margin: 0 0 16px;
+    }
+
+    .ds-priceset .g {
+        border-top: 1px solid #262c33;
+        padding: 14px 0 0;
+        margin-top: 14px;
+    }
+
+    .ds-priceset .g:first-of-type {
+        border-top: 0;
+        margin-top: 0;
+        padding-top: 0;
+    }
+
+    .ds-priceset .gh {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .ds-priceset .gn {
+        font-family: var(--font-display);
+        font-size: 11px;
+        letter-spacing: 0.09em;
+    }
+
+    .ds-priceset .gu {
+        font-size: 9px;
+        letter-spacing: 0.14em;
+        font-weight: 700;
+        color: #6e767e;
+    }
+
+    .ds-pinput {
+        display: flex;
+        align-items: stretch;
+        border: 1px solid #3a4149;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .ds-pinput .cur {
+        background: #1a1e23;
+        padding: 11px 12px;
+        font-family: var(--font-mono);
+        font-size: 14px;
+        color: var(--color-ds-mute);
+        display: flex;
+        align-items: center;
+        font-weight: 700;
+    }
+
+    .ds-pinput input {
+        flex: 1;
+        background: #0a0c0e;
+        border: 0;
+        color: #fff;
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: 19px;
+        padding: 9px 12px;
+        min-width: 0;
+    }
+
+    .ds-pinput input:focus {
+        outline: 2px solid var(--color-ds-red);
+        outline-offset: -2px;
+    }
+
+    .ds-pinput .per {
+        background: #1a1e23;
+        padding: 11px 12px;
+        font-size: 9.5px;
+        letter-spacing: 0.12em;
+        color: #6e767e;
+        display: flex;
+        align-items: center;
+        font-weight: 700;
+    }
+
+    .ds-priceset .save {
+        width: 100%;
+        margin-top: 16px;
+    }
+
+    .ds-priceset .last {
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        color: #5c6469;
+        margin-top: 11px;
+        text-align: center;
+    }
+
+    /* ---- forms --------------------------------------------------------- */
+
+    .ds-fld {
+        margin-top: 12px;
+    }
+
+    .ds-fld label {
+        display: block;
+        font-size: 9.5px;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: var(--color-ds-mute);
+        margin-bottom: 4px;
+    }
+
+    .ds-fld input,
+    .ds-fld select,
+    .ds-fld textarea {
+        width: 100%;
+        font-family: var(--font-body);
+        font-size: 13px;
+        padding: 9px 10px;
+        border: 1px solid var(--color-ds-line);
+        border-radius: 3px;
+        background: #fff;
+        color: var(--color-ds-ink);
+    }
+
+    .ds-fld input.mono,
+    .ds-fld select.mono {
+        font-family: var(--font-mono);
+    }
+
+    .ds-fld input:focus,
+    .ds-fld select:focus,
+    .ds-fld textarea:focus {
+        outline: 2px solid var(--color-ds-red);
+        outline-offset: -1px;
+        border-color: var(--color-ds-red);
+    }
+
+    .ds-fld .err {
+        font-size: 11px;
+        color: var(--color-ds-red);
+        font-weight: 600;
+        margin-top: 4px;
+    }
+
+    .ds-fld .hint {
+        font-size: 11px;
+        color: var(--color-ds-mute);
+        margin-top: 4px;
+        line-height: 1.5;
+    }
+
+    .ds-g2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .ds-g3 {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr;
+        gap: 10px;
+    }
+
+    /* ---- document builder ---------------------------------------------- */
+
+    .ds-build {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: start;
+        margin-top: 4px;
+    }
+
+    .ds-lineitem {
+        border: 1px solid var(--color-ds-line);
+        border-left: 3px solid var(--color-ds-red);
+        border-radius: 0;
+        padding: 10px 12px 14px;
+        margin-top: 11px;
+        background: var(--color-ds-mist);
+    }
+
+    .ds-lineitem .lh {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .ds-lineitem .lh span {
+        font-family: var(--font-mono);
+        font-size: 9.5px;
+        letter-spacing: 0.11em;
+        color: var(--color-ds-mute);
+    }
+
+    .ds-lineitem .lh button {
+        background: none;
+        border: 0;
+        color: var(--color-ds-red);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+
+    .ds-addline {
+        width: 100%;
+        margin-top: 11px;
+        padding: 10px;
+        border: 1px dashed var(--color-ds-steel);
+        background: none;
+        font-weight: 700;
+        font-size: 10.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    .ds-addline:hover {
+        border-color: var(--color-ds-red);
+        color: var(--color-ds-red);
+    }
+
+    .ds-prev {
+        background: #fff;
+        border: 1px solid var(--color-ds-line);
+        border-radius: 4px;
+        overflow: hidden;
+        position: sticky;
+        top: 16px;
+    }
+
+    .ds-prevbar {
+        background: var(--color-ds-mist);
+        padding: 9px 14px;
+        border-bottom: 1px solid var(--color-ds-line);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .ds-prevbar .t {
+        font-size: 9.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--color-ds-steel);
+    }
+
+    .ds-prevact {
+        display: flex;
+        gap: 8px;
+        padding: 14px;
+        border-top: 1px solid var(--color-ds-line);
+        background: var(--color-ds-mist);
+    }
+
+    .ds-prevact .ds-btn {
+        flex: 1;
+        padding: 12px 10px;
+    }
+
+    /* ===================== the document itself ===========================
+     * Shared verbatim by the live preview, the browser print route and the
+     * Browsershot PDF — one template, no drift.
+     * ------------------------------------------------------------------- */
+
+    .ds-paper {
+        padding: 22px 24px;
+        font-size: 11px;
+        background: #fff;
+        color: var(--color-ds-ink);
+        font-family: var(--font-body);
+    }
+
+    .ds-paper .ptop {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .ds-paper .ds-mark {
+        font-size: 24px;
+    }
+
+    .ds-paper .ds-slash {
+        width: 4px;
+        height: 20px;
+    }
+
+    .ds-paper .w1 {
+        font-size: 14px;
+    }
+
+    .ds-paper .w2 {
+        font-size: 6px;
+    }
+
+    .ds-paper .tagline {
+        font-size: 8px;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--color-ds-mute);
+        font-weight: 700;
+        margin-top: 8px;
+    }
+
+    .ds-paper .dt {
+        font-family: var(--font-display);
+        font-size: 22px;
+        text-align: right;
+        letter-spacing: -0.01em;
+    }
+
+    /* motif 3 of 3 — the slash beneath the document title */
+    .ds-paper .dtr {
+        height: 3px;
+        background: var(--color-ds-red);
+        transform: skewX(-16deg);
+        margin-top: 4px;
+    }
+
+    .ds-paper .pfrom {
+        text-align: right;
+        font-size: 9px;
+        line-height: 1.6;
+        color: var(--color-ds-steel);
+        margin-top: 9px;
+    }
+
+    .ds-paper hr {
+        border: 0;
+        border-top: 1px solid var(--color-ds-line);
+        margin: 14px 0;
+    }
+
+    .ds-paper .pmeta {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .ds-paper .plbl {
+        font-size: 8px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--color-ds-mute);
+        font-weight: 600;
+    }
+
+    .ds-paper .pname {
+        font-family: var(--font-display);
+        font-size: 11.5px;
+        text-transform: uppercase;
+        margin-top: 3px;
+    }
+
+    .ds-paper .paddr {
+        font-size: 9px;
+        color: var(--color-ds-steel);
+        line-height: 1.6;
+        margin-top: 3px;
+    }
+
+    .ds-paper .mr {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        font-size: 9.5px;
+        padding: 2px 0;
+    }
+
+    .ds-paper .mr .mk {
+        font-weight: 700;
+    }
+
+    .ds-paper .mr .mv {
+        font-family: var(--font-mono);
+        color: var(--color-ds-steel);
+        width: 88px;
+        text-align: right;
+    }
+
+    .ds-paper .mr.vv .mv {
+        color: var(--color-ds-red);
+        font-weight: 700;
+    }
+
+    .ds-paper table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 16px;
+    }
+
+    .ds-paper table th {
+        background: var(--color-ds-red);
+        color: #fff;
+        font-size: 8px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 8px 9px;
+        text-align: right;
+        font-weight: 700;
+    }
+
+    .ds-paper table th:first-child {
+        text-align: left;
+    }
+
+    .ds-paper table td {
+        padding: 9px;
+        border-bottom: 1px solid var(--color-ds-line);
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-align: right;
+        vertical-align: top;
+    }
+
+    .ds-paper table td:first-child {
+        text-align: left;
+    }
+
+    .ds-paper .pt {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 12px;
+    }
+
+    .ds-paper .ptb {
+        width: 210px;
+    }
+
+    .ds-paper .ptr {
+        display: flex;
+        justify-content: space-between;
+        font-size: 9.5px;
+        padding: 4px 9px;
+    }
+
+    .ds-paper .ptr .k {
+        font-weight: 600;
+        color: var(--color-ds-steel);
+    }
+
+    .ds-paper .ptr .v {
+        font-family: var(--font-mono);
+    }
+
+    .ds-paper .grand {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--color-ds-ink);
+        color: #fff;
+        padding: 9px;
+    }
+
+    .ds-paper .grand .k {
+        font-family: var(--font-display);
+        font-size: 9px;
+        letter-spacing: 0.1em;
+    }
+
+    .ds-paper .grand .v {
+        font-family: var(--font-mono);
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .ds-paper .pcols {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 20px;
+    }
+
+    .ds-paper .pcols h5 {
+        font-size: 8px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--color-ds-mute);
+        font-weight: 600;
+        margin: 0 0 5px;
+    }
+
+    .ds-paper .pcols .body {
+        font-size: 9px;
+        line-height: 1.62;
+        color: var(--color-ds-steel);
+        white-space: pre-line;
+    }
+
+    .ds-paper .pcols .body.mono {
+        font-family: var(--font-mono);
+    }
+
+    .ds-paper .pfoot {
+        border-top: 3px solid var(--color-ds-red);
+        margin-top: 22px;
+        padding-top: 8px;
+        font-family: var(--font-display);
+        font-size: 8.5px;
+        letter-spacing: 0.13em;
+    }
+
+    .ds-paper .pfoot em {
+        font-style: normal;
+        color: var(--color-ds-red);
+    }
+
+    /* ---- banners -------------------------------------------------------- */
+
+    .ds-banner {
+        border-left: 4px solid var(--color-ds-red);
+        background: var(--color-ds-red-tint);
+        color: var(--color-ds-red-deep);
+        padding: 14px 18px;
+        font-size: 13px;
+        line-height: 1.62;
+        font-weight: 500;
+    }
+
+    .ds-banner b {
+        font-family: var(--font-display);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .ds-banner.ok {
+        border-left-color: var(--color-ds-green);
+        background: #e1f5ee;
+        color: #0f6e56;
+    }
+
+    .ds-banner.warn {
+        border-left-color: var(--color-ds-amber);
+        background: #fdf3e6;
+        color: #8a560f;
+    }
+
+    /* numbers are mono, everywhere, without exception */
+    .ds-num {
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+/* ===================== responsive =======================================
+ * Screen only. An A4 page is about 700 CSS pixels wide inside its margins,
+ * which would otherwise trip the mobile breakpoints and stack the document's
+ * two-column banking and terms block in the PDF.
+ * ----------------------------------------------------------------------- */
+
+@media screen and (max-width: 980px) {
+    .ds-hero .inner {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .ds-hero h1 {
+        font-size: 52px;
+    }
+
+    .ds-trust {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ds-svcs {
+        grid-template-columns: 1fr;
+    }
+
+    .ds-split {
+        grid-template-columns: 1fr;
+        /* Stacked, so the halves carry their own colour again. */
+        background: var(--color-ds-mist);
+        padding-inline: 0;
+    }
+
+    .ds-split .l {
+        padding: 48px var(--ds-edge);
+    }
+
+    .ds-split .r {
+        background: var(--color-ds-ink);
+        padding: 48px var(--ds-edge);
+    }
+
+    .ds-cards,
+    .ds-cards-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ds-two {
+        grid-template-columns: 1fr;
+    }
+
+    .ds-build {
+        grid-template-columns: 1fr;
+    }
+
+    .ds-prev {
+        position: static;
+    }
+
+    .ds-footer .cols {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media screen and (max-width: 760px) {
+    .ds-nav {
+        flex-wrap: wrap;
+        padding: 14px 18px;
+        gap: 10px;
+    }
+
+    .ds-navtoggle {
+        display: block;
+        order: 2;
+    }
+
+    .ds-nav nav {
+        order: 4;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        display: none;
+        border-top: 1px solid var(--color-ds-line);
+        padding-top: 6px;
+    }
+
+    .ds-nav nav.open {
+        display: flex;
+    }
+
+    .ds-nav nav a {
+        padding: 11px 0;
+        width: 100%;
+    }
+
+    .ds-nav .ds-callbtn {
+        order: 3;
+    }
+
+    .ds-hero {
+        padding: 34px 18px 0;
+    }
+
+    .ds-hero h1 {
+        font-size: 40px;
+    }
+
+    .ds-pump .digits {
+        font-size: 38px;
+    }
+
+    .ds-sec {
+        padding: 34px 18px;
+    }
+
+    .ds-sec h2 {
+        font-size: 24px;
+    }
+
+    .ds-split .l,
+    .ds-split .r,
+    .ds-footcta,
+    .ds-footer {
+        padding: 30px 18px;
+    }
+
+    .ds-footcta .big {
+        font-size: 20px;
+    }
+
+    .ds-trust {
+        grid-template-columns: 1fr;
+    }
+
+    .ds-cards,
+    .ds-cards-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .ds-admin {
+        grid-template-columns: 1fr;
+    }
+
+    .ds-side {
+        padding-bottom: 12px;
+    }
+
+    .ds-main {
+        padding: 18px 16px 34px;
+    }
+
+    .ds-g2,
+    .ds-g3 {
+        grid-template-columns: 1fr;
+    }
+
+    .ds-paper .pcols {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+        animation: none !important;
+        scroll-behavior: auto !important;
+    }
+}
