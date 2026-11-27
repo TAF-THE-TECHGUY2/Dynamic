@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>@yield('title', 'Dynamic Solutions — Bulk diesel supply, Benoni')</title>
-    <meta name="description" content="@yield('description', 'Bulk diesel supply and secure truck parking at 31 Dassie Road, Zesfontein, Benoni. 50ppm and 500ppm delivered across Gauteng.')">
+    <meta name="description" content="@yield('description', 'Bulk diesel supply and secure truck parking at Zesfontein, Benoni. 50ppm and 500ppm delivered across Gauteng.')">
     <link rel="canonical" href="{{ url()->current() }}">
 
     <meta property="og:type" content="website">

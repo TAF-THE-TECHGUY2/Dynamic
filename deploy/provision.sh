@@ -24,7 +24,8 @@ APP_DIR="${APP_DIR:-/var/www/dynamic}"
 REPO="${REPO:-https://github.com/TAF-THE-TECHGUY2/Dynamic.git}"
 DB_NAME="${DB_NAME:-dynamic_solutions}"
 DB_USER="${DB_USER:-dynamic}"
-PHP_VERSION="8.3"
+# 8.3 is what Ubuntu 24.04 ships; 26.04 ships 8.5. Override to match the box.
+PHP_VERSION="${PHP_VERSION:-8.3}"
 
 log() { printf '\n\033[1;31m==>\033[0m %s\n' "$1"; }
 
@@ -197,6 +198,23 @@ chmod -R a+rx /opt/puppeteer
 log "Chrome installed at: ${CHROME_PATH}"
 echo "$CHROME_PATH" > /etc/dynamic-chrome-path
 
+# Ubuntu 23.10+ blocks unprivileged user namespaces through AppArmor, and
+# Chrome's sandbox needs them: every render dies with "No usable sandbox!".
+# This profile allows them for the puppeteer Chrome only, so the sandbox stays
+# on (no --no-sandbox). The glob covers future Chrome versions.
+if [[ -d /etc/apparmor.d ]] && command -v apparmor_parser >/dev/null; then
+    log "Allowing Chrome's sandbox under AppArmor"
+    cat > /etc/apparmor.d/puppeteer-chrome <<'APPARMOR'
+abi <abi/4.0>,
+include <tunables/global>
+
+profile puppeteer-chrome /opt/puppeteer/chrome/*/chrome-linux*/chrome flags=(unconfined) {
+  userns,
+}
+APPARMOR
+    apparmor_parser -r /etc/apparmor.d/puppeteer-chrome
+fi
+
 # ---------------------------------------------------------------------------
 # Database
 # ---------------------------------------------------------------------------
@@ -243,8 +261,8 @@ find "$APP_DIR/storage" "$APP_DIR/bootstrap/cache" -type d -exec chmod 775 {} \;
 # have nowhere to put their caches and the deploy fails on a permissions error
 # that reads like something else entirely.
 log "Giving ${APP_USER} writable cache directories"
-mkdir -p /var/www/.npm /var/www/.composer /var/www/.cache
-chown -R "${APP_USER}:${APP_USER}" /var/www/.npm /var/www/.composer /var/www/.cache
+mkdir -p /var/www/.npm /var/www/.composer /var/www/.cache /var/www/.config /var/www/.local
+chown -R "${APP_USER}:${APP_USER}" /var/www/.npm /var/www/.composer /var/www/.cache /var/www/.config /var/www/.local
 
 # Both npm ci (puppeteer's postinstall) and Browsershot look here. Without it
 # every deploy re-downloads ~150MB of Chrome into a directory nothing can read.

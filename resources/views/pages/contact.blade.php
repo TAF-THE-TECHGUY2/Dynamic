@@ -1,7 +1,7 @@
 @extends('layouts.site')
 
-@section('title', 'Contact — 31 Dassie Road, Zesfontein, Benoni | Dynamic Solutions')
-@section('description', 'Call 061 687 4334, WhatsApp us or drive in to 31 Dassie Road, Zesfontein, Benoni, Gauteng. Bulk diesel and secure truck parking.')
+@section('title', 'Contact — Zesfontein, Benoni | Dynamic Solutions')
+@section('description', 'Call 061 687 4334, WhatsApp us or drive in to Zesfontein, Benoni, Gauteng. Bulk diesel and secure truck parking.')
 
 @section('content')
     <div class="ds-sec">
@@ -75,9 +75,7 @@
                     <div class="ph"><h3>The yard</h3></div>
                     <div class="pb">
                         <div class="ds-addr" style="margin-top:0">
-                            {{ settings('business.address_line1') }}<br>
-                            {{ settings('business.address_line2') }}<br>
-                            {{ settings('business.address_line3') }}
+                            {!! collect([settings('business.address_line1'), settings('business.address_line2'), settings('business.address_line3')])->filter()->map(fn ($line) => e($line))->join('<br>') !!}
                         </div>
 
                         <div style="margin-top:16px;display:grid;gap:10px">

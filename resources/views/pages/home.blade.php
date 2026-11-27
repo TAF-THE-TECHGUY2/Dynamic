@@ -1,7 +1,7 @@
 @extends('layouts.site')
 
 @section('title', 'Diesel available — bulk supply in Benoni, Gauteng | Dynamic Solutions')
-@section('description', 'Bulk 50ppm and 500ppm diesel delivered free across Gauteng, plus secure truck parking at 31 Dassie Road, Zesfontein, Benoni. COD accepted, own transport.')
+@section('description', 'Bulk 50ppm and 500ppm diesel delivered free across Gauteng, plus secure truck parking in Zesfontein, Benoni. COD accepted, own transport.')
 
 @section('content')
     <div class="ds-hero">
@@ -55,7 +55,7 @@
                 <span class="ic">@include('partials.icons.yard')</span>
                 <h3>Truck stop &amp; yard</h3>
                 <p>
-                    Secure overnight and long-stay parking at 31 Dassie Road. Pump on site, so you
+                    Secure overnight and long-stay parking in Zesfontein, Benoni. Pump on site, so you
                     refuel before you roll out.
                 </p>
                 <div class="go">Parking rates →</div>
@@ -77,11 +77,10 @@
         <div class="l">
             <div class="ds-eyebrow">Find the yard</div>
             <h2 style="font-family:var(--font-display);font-size:28px;margin:8px 0 0">
-                {{ Str::upper(settings('business.address_line1', '31 Dassie Road')) }}
+                {{ Str::upper(settings('business.address_line1', 'Zesfontein, Benoni')) }}
             </h2>
             <div class="ds-addr">
-                {{ settings('business.address_line2') }}<br>
-                {{ settings('business.address_line3') }}
+                {!! collect([settings('business.address_line2'), settings('business.address_line3')])->filter()->map(fn ($line) => e($line))->join('<br>') !!}
             </div>
             <p class="intro">
                 Drive in for pump fills, bulk collection or to book a parking bay.

@@ -1,6 +1,6 @@
 @extends('layouts.site')
 
-@section('title', 'Truck stop & secure parking, 31 Dassie Road Benoni | Dynamic Solutions')
+@section('title', 'Truck stop & secure parking, Zesfontein, Benoni | Dynamic Solutions')
 @section('description', 'Secure overnight and long-stay truck parking in Zesfontein, Benoni. Pump on site, weighbridge-friendly access for interlink and rigid trucks.')
 
 @section('content')

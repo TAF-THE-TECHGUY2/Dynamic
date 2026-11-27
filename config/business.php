@@ -32,9 +32,9 @@ return [
     'whatsapp' => env('BUSINESS_WHATSAPP', '27616874334'),
 
     'address' => [
-        'line1' => env('BUSINESS_ADDRESS_LINE1', '31 Dassie Road'),
-        'line2' => env('BUSINESS_ADDRESS_LINE2', 'Zesfontein, Benoni'),
-        'line3' => env('BUSINESS_ADDRESS_LINE3', 'Gauteng, South Africa'),
+        'line1' => env('BUSINESS_ADDRESS_LINE1', 'Zesfontein, Benoni'),
+        'line2' => env('BUSINESS_ADDRESS_LINE2', 'Gauteng, South Africa'),
+        'line3' => env('BUSINESS_ADDRESS_LINE3', ''),
     ],
 
     'hours' => [

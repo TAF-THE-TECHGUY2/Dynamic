@@ -24,9 +24,7 @@
                 Fueling your business. Powering your journey.
             </p>
             <div class="ds-num" style="margin-top:12px;font-size:11px;letter-spacing:.04em">
-                {{ settings('business.address_line1') }}<br>
-                {{ settings('business.address_line2') }}<br>
-                {{ settings('business.address_line3') }}
+                {!! collect([settings('business.address_line1'), settings('business.address_line2'), settings('business.address_line3')])->filter()->map(fn ($line) => e($line))->join('<br>') !!}
             </div>
         </div>
 

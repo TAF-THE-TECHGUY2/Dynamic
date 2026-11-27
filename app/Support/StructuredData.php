@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Support;
 
 /**
- * Schema.org JSON-LD for the yard at 31 Dassie Road.
+ * Schema.org JSON-LD for the yard in Zesfontein, Benoni.
  *
  * A diesel supplier is found by people searching "diesel near me" from a cab,
  * so the LocalBusiness block carries the address, hours and phone number that
@@ -34,7 +34,6 @@ final class StructuredData
             ],
             'address' => [
                 '@type' => 'PostalAddress',
-                'streetAddress' => $settings->string('business.address_line1', '31 Dassie Road'),
                 'addressLocality' => 'Benoni',
                 'addressRegion' => 'Gauteng',
                 'addressCountry' => 'ZA',

@@ -95,7 +95,7 @@ php artisan storage:link 2>/dev/null || true
 
 log "Restarting the queue worker"
 php artisan queue:restart
-sudo systemctl restart dynamic-queue 2>/dev/null || \
+sudo -n systemctl restart dynamic-queue 2>/dev/null || \
     echo "  (could not restart dynamic-queue — run: sudo systemctl restart dynamic-queue)"
 
 log "Checking the PDF renderer"
